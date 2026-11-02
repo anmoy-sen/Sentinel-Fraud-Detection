@@ -1,0 +1,80 @@
+
+# ============================================================
+# Sentinel Fraud Detection — Central Configuration
+# ============================================================
+
+model:
+  # Paths to individual trained model pickles
+  random_forest_path: models/random_forest_model.pkl
+  xgboost_path:       models/xgboost_model.pkl
+  lightgbm_path:      models/lightgbm_model.pkl
+  catboost_path:      models/catboost_model.pkl
+
+  # Trained inference pipeline (encoder + ensemble)
+  ensemble_path:      models/ensemble_pipeline.pkl
+  encoder_path:       models/ordinal_encoder.pkl
+  feature_cols_path:  models/feature_cols.json
+
+  # Fraud decision threshold (validated via PR curve — see notebooks/05)
+  threshold: 0.627
+
+  # Optuna hyperparameter search settings
+  optuna:
+    n_trials: 50
+    timeout_sec: 3600          # max 1 hour per model
+    study_dir: models/optuna/
+
+simulator:
+  mode: batch                  # 'batch' | 'custom'
+  batch_size: 50               # transactions per flush (batch mode)
+  batch_interval_sec: 3        # seconds between flushes (batch mode)
+  custom_speed: 50             # transactions/sec (custom mode)
+  test_data_path: data/processed/test_engineered.csv
+  chunk_size: 500              # chunk size for reading test CSV
+
+alerts:
+  db_path: data/alerts.db
+  max_display: 500             # max rows shown in dashboard table
+
+monitoring:
+  psi_threshold: 0.2           # >0.2 = significant drift (red alert)
+  psi_warning: 0.1             # 0.1–0.2 = moderate drift (yellow)
+  reference_window: 10000      # rows sampled from training set as reference
+  drift_check_every: 1000      # check drift every N transactions
+  top_features_to_monitor: 20  # number of features to track
+
+velocity_rules:
+  # Rule 1: Too many transactions from same card in short window
+  card_tx_limit: 3
+  card_tx_window_sec: 300      # 5 minutes
+
+  # Rule 2: Unusually large amount vs. card's historical average
+  amount_zscore_threshold: 5   # > 5 standard deviations
+
+  # Rule 3: High-risk combination flags
+  night_round_amount: true     # new card + night + round amount
+
+  # Rule 4: Email mismatch threshold
+  email_mismatch_amount_threshold: 500
+
+  # Rule 5: Multiple email domains for same card in short window
+  email_variety_limit: 2
+  email_variety_window_sec: 3600  # 1 hour
+
+training:
+  data_path: data/processed/train_engineered.csv
+  test_size: 0.20
+  random_state: 42
+  cv_folds: 5
+  metrics_path: metrics/eval_metrics.json
+  models_dir: models/
+
+paths:
+  data_raw: data/raw/
+  data_processed: data/processed/
+  data_synthetic: data/synthetic/
+  logs: logs/
+
+logging:
+  level: INFO
+  file: logs/sentinel.log

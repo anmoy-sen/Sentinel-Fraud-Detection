@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs & Databases
+logs/
+*.log
+data/*.db
+data/alerts.db
+feature_store/data/*.db
+
+# Large Data files (tracked via DVC / S3 / cloud storage)
+data/raw/*.csv
+data/processed/*.csv
+data/synthetic/*.csv
+
+# CatBoost & Optuna caches
+catboost_info/
+models/optuna/
+
+# DVC local caches & temp
+.dvc/cache/
+.dvc/tmp/
+.dvc/site_cache/
+
+# OS
+.DS_Store
+Thumbs.db

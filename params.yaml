@@ -1,0 +1,22 @@
+# ============================================================
+# Sentinel Fraud Detection — DVC Hyperparameters & Config
+# ============================================================
+
+model:
+  threshold: 0.627
+  ensemble_path: models/ensemble_pipeline.pkl
+  feature_cols_path: models/feature_cols.json
+  lightgbm_path: models/lightgbm_model.pkl
+  xgboost_path: models/xgboost_model.pkl
+  catboost_path: models/catboost_model.pkl
+
+training:
+  data_path: data/processed/train_engineered.csv
+  test_size: 0.20
+  random_state: 42
+  metrics_path: metrics/eval_metrics.json
+
+monitoring:
+  psi_threshold: 0.2
+  psi_warning: 0.1
+  top_features_to_monitor: 20

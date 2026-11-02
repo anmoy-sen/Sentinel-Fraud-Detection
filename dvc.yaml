@@ -1,0 +1,28 @@
+stages:
+  train:
+    cmd: python training/train_ensemble.py
+    deps:
+      - training/train_ensemble.py
+      - src/models/structured/models.py
+      - src/models/structured/pipeline.py
+      - data/processed/train_engineered.csv
+    params:
+      - model.threshold
+      - training.test_size
+      - training.random_state
+    outs:
+      - models/ensemble_pipeline.pkl
+      - models/feature_cols.json
+    metrics:
+      - metrics/eval_metrics.json:
+          cache: false
+
+  evaluate:
+    cmd: python training/evaluate_threshold.py --update-config
+    deps:
+      - training/evaluate_threshold.py
+      - models/ensemble_pipeline.pkl
+      - models/feature_cols.json
+    outs:
+      - metrics/threshold_sweep.csv:
+          cache: false
